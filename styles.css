@@ -1,0 +1,218 @@
+body {
+     background-color: #FFFFFF;
+ 
+}
+/* map */
+#map {
+     height: 700px; 
+     width: 100%;
+    }
+
+    .info {
+     padding: 6px 8px;
+     font: 14px/16px Arial, Helvetica, sans-serif;
+     background: white;
+     background: rgba(255,255,255,0.8);
+     box-shadow: 0 0 15px rgba(0,0,0,0.2);
+     border-radius: 5px;
+ }
+ .info h4 {
+     margin: 0 0 5px;
+     color: #777;
+ }
+
+ 
+ .custom-control {
+     background: #FFFFFF;
+     border: 1px solid #A22020;
+     border-radius: 3px;
+     box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+     box-sizing: border-box;
+     color: #A22020;
+     cursor: pointer;
+     display: inline-block;
+     font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+     font-size: 14px;
+     font-weight: 500;
+     line-height: 14px;
+     min-height: 30px;
+     outline: 0;
+     padding: 6px 7px;
+     text-align: center;
+     text-rendering: geometricprecision;
+     text-transform: none;
+     user-select: none;
+     -webkit-user-select: none;
+     touch-action: manipulation;
+     vertical-align: middle;
+     cursor: pointer;
+ }
+ button {
+     background: #FFFFFF;
+     border: 1px solid #A22020;
+     border-radius: 3px;
+     box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+     box-sizing: border-box;
+     color: #A22020;
+     cursor: pointer;
+     display: inline-block;
+     font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+     font-size: 14px;
+     font-weight: 500;
+     line-height: 14px;
+     min-height: 30px;
+     outline: 0;
+     padding: 6px 7px;
+     text-align: center;
+     text-rendering: geometricprecision;
+     text-transform: none;
+     user-select: none;
+     -webkit-user-select: none;
+     touch-action: manipulation;
+     vertical-align: middle;
+   }
+   
+   button:hover,
+   button:active {
+     background-color: initial;
+     background-position: 0 0;
+     color: #A22020;
+   }
+   
+   button:active {
+     opacity: .5;
+   
+   }
+
+   /* dashboard */
+
+   .h1 {
+     text-decoration: aqua;
+   }
+
+ 
+ 
+   
+   .form-select{
+     border-radius: 10px;
+   }
+   .filter_screen{
+     border-radius: 10px;
+     min-height: 80px;
+   }
+   .tooltip-container {
+     position: relative;
+     display: inline-block;
+   
+   }
+   
+   .tooltip-text {
+     visibility: hidden;
+     width: 120px;
+     background-color:#fff ;
+     color:black  ;
+     text-align: center;
+     border-radius: 6px;
+     padding: 5px 0;
+     position: absolute;
+     z-index: 1;
+     bottom: 110%;
+     right: 0%;
+     margin-left: 0px;
+     opacity: 0;
+     transition: opacity 0.3s;
+     border: 1px solid #1d1c1c; 
+     box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+   }
+   
+   .tooltip-container:hover .tooltip-text {
+     visibility: visible;
+     opacity: 1;
+   }
+   .clear_tags{
+     width: max-content;
+     background-color: #A22020;
+     color: #fff;
+     font-weight: 600;
+   }
+   
+   .clear_tags:hover {
+     box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+     cursor: pointer;
+   }
+   
+   .filter_icon{
+   
+     position: absolute;
+     right: -3px;
+     top: -3px;
+   }
+   .filter_icon:hover{
+     cursor: pointer;
+   }
+   /* kpi card */
+
+   
+
+.kpiCard {
+     font-family: 'Roboto', sans-serif;
+     width: 100%;
+     height: 122px;
+     text-decoration: black;
+     padding: 5px;
+     box-shadow: 2px 2px 2px 2px;
+     border-radius: 15px;
+     margin-top: 10px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+      
+   
+     .card_title,
+     .card_text {
+       color: white;
+       width: 100%;
+       font-size: 24px;
+     }
+   }
+   
+   
+   .kpiCard:hover {
+    cursor: pointer;
+   }
+   
+   
+   
+   @media (max-width: 912px) { 
+     .kpiCard {
+       height:70px; 
+       .card_title,
+       .card_text {
+     
+         font-size: 16px;
+       }
+     }
+   
+   }
+   .main{
+     background-color: #f5f3ff;
+     margin-left: 200px; /* Push main content to the right */
+     width: calc(100% - 200px); /* Reduce the width of the main content */
+     min-height: 100vh;  
+  
+   }
+   
+   /* side bar */
+ #sidebar {
+   min-height: 100vh; /* Full height */
+   width: 200px; /* Sidebar width */
+   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+   z-index: 1000; /* Stay on top */
+   top: 0; /* Stay at the top */
+   left: 0; /* Stay on the left */
+   background-color: #343a40; /* Dark background for sidebar */
+   overflow-x: hidden; /* Disable horizontal scroll */
+   padding-top: 20px;
+        }
+ 
