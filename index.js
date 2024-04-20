@@ -62,8 +62,8 @@ if(country.name === 'Uganda'){
           // Fitting the map within country bounds
           var bounds = geojsonLayer.getBounds();
           map.fitBounds(bounds); 
-          map.options.maxBounds = bounds;
-          map.options.maxBoundsViscosity = 1.0;
+        //   map.options.maxBounds = bounds;
+        //   map.options.maxBoundsViscosity = 1.0;
         
             //* Admin2 Layer
             var geojsonLayer2 = L.geoJson(country.adm2, { 
