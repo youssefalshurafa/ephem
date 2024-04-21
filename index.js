@@ -40,7 +40,7 @@ var google = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
                 layer.on({
                     mouseover:(e) => highlightFeature(e),
                     mouseout: (e) => resetHighlight(e),
-                  
+                    click: (e) => drillDown(e),
                 });
             }
           }).addTo(map)
@@ -217,76 +217,13 @@ var healthFacilitiesLayer = L.layerGroup();
         drawnItems.addLayer(layer);
     });
 
-      // =============== Geojson Layers Control ===============//
-      let admin1Layer = geojsonLayer ; 
-      let admin2Layer = geojsonLayer2 ; 
-  
-      const CustomControl = L.Control.extend({
-        options: {
-            position: 'topleft' // Or another suitable position
-        },
-    
-        onAdd: function (map) {
-          const container = L.DomUtil.create('div', 'custom-control');
-          container.innerHTML = ` 
-              <input type="checkbox" id="admin1-checkbox" name="admin1Layer" checked>
-              <label style='margin-bottom: 5px;' for="admin1-checkbox">Admin 1</label><br>
-              <input type="checkbox" id="admin2-checkbox" name="admin2Layer">
-              <label for="admin2-checkbox">Admin 2</label> 
-          `;
-  
-        
-          L.DomEvent.on(container.querySelector('#admin1-checkbox'), 'change', () => {
-           if(map.hasLayer(admin1Layer)){
-             map.removeLayer(admin1Layer)
-           } else {
-            map.addLayer(admin1Layer)
-           }
-      });
-  
-          L.DomEvent.on(container.querySelector('#admin2-checkbox'), 'change', () => {
-            if(map.hasLayer(admin2Layer)){
-              map.removeLayer(admin2Layer)
-            } else {
-             map.addLayer(admin2Layer)
-            }
-          });
-  
-          L.DomEvent.disableClickPropagation(container); 
-          return container;
-        }
-    });
-    // Add the control to the map
-    const customControl = new CustomControl().addTo(map); 
 
-    //side by side
-  
 
-    // adding a toggle button 
-//     var sideBySideControl;
-// function toggleSidebyside() {
-//   if (sideBySideControl) {
-//     map.removeControl(sideBySideControl);
-//     sideBySideControl = null;
-// } else {
-//     sideBySideControl =   L.control.sideBySide(rain , clouds).addTo(map);
-// }
-// }
-// var toggleButton = L.DomUtil.create('button', 'toggle-button'); 
-// toggleButton.innerHTML = 'Compare';
-// toggleButton.addEventListener('click',() =>  toggleSidebyside());
 
-// var resetControl = L.control({ position: 'topright' }); 
-
-// resetControl.onAdd = function (map) {
-//    return toggleButton;
-// };
-
-// resetControl.addTo(map);
 
 // Assuming your layers are defined as variables like osm, google, rain, clouds, etc.
 
-// Create a control with two dropdowns for selecting layers
+//============ Create a control with two dropdowns for selecting layers ===========//
 const LayerControl = L.Control.extend({
   options: {
       position: 'topright',
@@ -334,8 +271,6 @@ const LayerControl = L.Control.extend({
           }
           const leftLayer = this.options.layers[selectLeft.value];
           const rightLayer = this.options.layers[selectRight.value];
-          console.log(leftLayer);
-          console.log(rightLayer);
           sideBySideControl = L.control.sideBySide(leftLayer, rightLayer).addTo(map);
       };
 
@@ -355,3 +290,123 @@ const LayerControl = L.Control.extend({
 
 // Add this new control to the map
 map.addControl(new LayerControl());
+var newGeojsonLayer;
+function drillDown(e) {
+   
+  //  checking and removing geojson layer
+   if (geojsonLayer) {
+     map.removeLayer(geojsonLayer);
+   }
+  // creating city geojson
+    const clickedCityCode = e.target.feature.properties.admin2_codes
+
+    const cityFeatures = country.adm2.features.filter(feature => feature.properties.admin2_codes === clickedCityCode)
+  
+   const cityGeojson = { type : 'FeatureCollection', features: cityFeatures}
+  // setting bounds
+    const bounds = e.target.getBounds();
+//* ADM2 Map
+   newGeojsonLayer = L.geoJson(cityGeojson, { 
+    style: style, 
+    onEachFeature: (feature, layer) => { 
+      const popupContent = '<b>' + feature.properties.ADM2_NAME + '</b><br />' + 
+      feature.properties.signal + ' signals'; 
+      // Bind popup and hover events
+      const popupOptions = { offset: [0, -10] }
+      layer.bindPopup(popupContent, popupOptions);
+      let hoveredStateId = null;
+        layer.on({
+          mouseover: (e) => {   
+            hoveredStateId = feature.properties.ADM2_CODE;
+            e.target.openPopup(); 
+            highlightFeature(e);  
+        },
+        mouseout: (e) => {
+          hoveredStateId = null;
+          if(!layer.isPopupOpen()){
+            resetHighlight(e); 
+          }
+         
+        },
+        popupopen: function(e) {
+          // Optionally highlight again (in case a different popup was open)
+          highlightFeature(e);  
+      }, 
+      popupclose: (e) =>  resetHighlight(e)
+        });
+    }
+  }).addTo(map);
+
+   map.fitBounds(bounds);
+ 
+}
+
+    // adding a toggle button 
+   
+    function toggleSidebyside() {
+      map.removeLayer(newGeojsonLayer)
+      map.fitBounds(bounds);
+      map.addLayer(geojsonLayer)
+    }
+    var toggleButton = L.DomUtil.create('button', 'toggle-button'); 
+    toggleButton.innerHTML = 'Return';
+    toggleButton.addEventListener('click',() =>  toggleSidebyside());
+    
+    var resetControl = L.control({ position: 'topright' }); 
+    
+    resetControl.onAdd = function (map) {
+       return toggleButton;
+    };
+    
+    resetControl.addTo(map);
+
+    
+      // =============== Geojson Layers Control ===============//
+      let admin1Layer = geojsonLayer ; 
+      let admin2Layer = geojsonLayer2 ; 
+  
+      const CustomControl = L.Control.extend({
+        options: {
+            position: 'topright' // Or another suitable position
+        },
+    
+        onAdd: function (map) {
+          const container = L.DomUtil.create('div', 'custom-control');
+          container.innerHTML = ` 
+              <input type="checkbox" id="admin1-checkbox" name="admin1Layer" checked>
+              <label style='margin-bottom: 5px;' for="admin1-checkbox">Admin 1</label><br>
+              <input type="checkbox" id="admin2-checkbox" name="admin2Layer">
+              <label for="admin2-checkbox">Admin 2</label> 
+          `;
+  
+        
+          L.DomEvent.on(container.querySelector('#admin1-checkbox'), 'change', () => {
+           if(map.hasLayer(admin1Layer)){
+             map.removeLayer(admin1Layer)
+           } else {
+            map.addLayer(admin1Layer)
+           }
+      });
+  
+          L.DomEvent.on(container.querySelector('#admin2-checkbox'), 'change', () => {
+            if(map.hasLayer(admin2Layer)){
+              map.removeLayer(admin2Layer)
+            } else {
+             map.addLayer(admin2Layer)
+            }
+          });
+  
+          L.DomEvent.disableClickPropagation(container); 
+          return container;
+        }
+    });
+    // Add the control to the map
+    const customControl = new CustomControl().addTo(map); 
+
+    //===== right-click action ========//
+    map.on('contextmenu', (e) => {
+      e.originalEvent.preventDefault();
+      map.removeLayer(newGeojsonLayer)
+      map.fitBounds(bounds);
+      map.addLayer(geojsonLayer)
+  });
