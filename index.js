@@ -310,15 +310,21 @@ const LayerControl = L.Control.extend({
       };
 
       // Add options to both selects
-      addOption(selectLeft, osm, 'OSM');
-      addOption(selectLeft, google, 'Google');
+      // addOption(selectLeft, osm, 'OSM');
+      // addOption(selectLeft, google, 'Google');
       addOption(selectLeft, rain, 'Rain');
       addOption(selectLeft, clouds, 'Clouds');
+      addOption(selectLeft, wind, 'Wind');
+      addOption(selectLeft, temperature, 'Temperature');
+      addOption(selectLeft, precipitationcls, 'Precipitation');
 
-      addOption(selectRight, osm, 'OSM');
-      addOption(selectRight, google, 'Google');
+      // addOption(selectRight, osm, 'OSM');
+      // addOption(selectRight, google, 'Google');
       addOption(selectRight, rain, 'Rain');
       addOption(selectRight, clouds, 'Clouds');
+      addOption(selectRight, wind, 'Wind');
+      addOption(selectRight, temperature, 'Temperature');
+      addOption(selectRight, precipitationcls, 'Precipitation');
 
       var sideBySideControl;
       // Listen for changes and update the Side By Side control
