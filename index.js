@@ -4,7 +4,7 @@ import { addingSignalsHandler } from "./functions/addingSignalHandler.js"
 
 const  country  = addingSignalsHandler()
 
-var map = L.map('map');
+var map = L.map('map', {doubleClickZoom: false});
 
 //Layers
 // Open street map
@@ -30,23 +30,9 @@ var google = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
    var wind = L.OWM.wind({showLegend: true, opacity: 0.5, appId: '8620e3d54164645551d0015414ab3638'});
    var precipitationcls  = L.OWM.precipitationClassic({showLegend: true, opacity: 0.5, appId: '8620e3d54164645551d0015414ab3638'});
 
-// health
 
-var healthFacilitiesLayer = L.layerGroup();
-if(country.name === 'Uganda'){
-    hospitals.map(facility => {
-    var marker = L.marker([facility.Latitude, facility.Longitude], {icon: myIcon}).bindPopup(facility.name)
-    healthFacilitiesLayer.addLayer(marker);
-   });
-   const healthFacilitiesSection = overlaysTree.children.find(section => section.label.includes('Health Facilities'));
-
-   // Add to the Health Facilities section
-   if (healthFacilitiesSection) {
-    const hospitalsEntry = healthFacilitiesSection.children[0]; 
-    hospitalsEntry.layer = healthFacilitiesLayer;
-   }
-  }
-
+ 
+//================ geojson layers ================ //
         //* Admin1 Layer
         var geojsonLayer = L.geoJson(country.adm1, { 
             style: (feature) =>  style(feature), 
@@ -76,7 +62,7 @@ if(country.name === 'Uganda'){
               }
             })
 
-  ///////////////////////////
+  //================= utility functions =====================//
 function getColor(d) {
      
     const maxSignal = country.adm1.features.reduce((max, feature) => {
@@ -172,7 +158,7 @@ var baseTree = [
            ]
           },
           {
-           label:  "<span style='font-size: 16px;margin-left: 5px;color:#108710; font-weight: 600'>  Health Facilities &#127973;</span>",
+           label:  "<span style='font-size: 16px;margin-left: 5px;color:#108710; font-weight: 600'>Health Facilities &#127973;</span>",
            selectAllCheckbox: false,
            children: [
              { label: "<span style='font-size: 14px; margin-left: 5px;'>Hospitals</span>", layer: healthFacilitiesLayer }
@@ -181,16 +167,34 @@ var baseTree = [
      ]
    }
    var drawnItems = L.featureGroup().addTo(map);
+
+
+    //=== health layer ======//
+    // health
+var myIcon = L.icon({
+  iconUrl: '/images/hospital.png',
+  iconSize: [38, 38],
+  iconAnchor: [22, 48],
+  popupAnchor: [-3, -40],
+});
+var healthFacilitiesLayer = L.layerGroup();
+
+    hospitals.map(facility => {
+    var marker = L.marker([facility.Latitude, facility.Longitude], {icon: myIcon}).bindPopup(facility.name)
+    healthFacilitiesLayer.addLayer(marker);
+   });
+   const healthFacilitiesSection = overlaysTree.children.find(section => section.label.includes('Health Facilities'));
+
+   // Add to the Health Facilities section
+   if (healthFacilitiesSection) {
+    const hospitalsEntry = healthFacilitiesSection.children[0]; 
+    hospitalsEntry.layer = healthFacilitiesLayer;
+   }
+// layertree control
    var lay = L.control.layers.tree(baseTree, overlaysTree, {collapsed: true});
-    lay.addTo(map)
-
-
-    L.control.layers({
-        'osm': osm.addTo(map),
-        "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-            attribution: 'google'
-        })
-    }, { 'drawlayer': drawnItems }, { position: 'topleft', collapsed: false }).addTo(map);
+   lay.addTo(map)
+  //====== Draw controls ======//
+    L.control.layers({ }, { 'drawlayer': drawnItems }, { position: 'topleft', collapsed: false }).addTo(map);
 
     map.addControl(new L.Control.Draw({
         edit: {
@@ -254,3 +258,94 @@ var baseTree = [
     });
     // Add the control to the map
     const customControl = new CustomControl().addTo(map); 
+
+    //side by side
+  
+
+    // adding a toggle button 
+//     var sideBySideControl;
+// function toggleSidebyside() {
+//   if (sideBySideControl) {
+//     map.removeControl(sideBySideControl);
+//     sideBySideControl = null;
+// } else {
+//     sideBySideControl =   L.control.sideBySide(rain , clouds).addTo(map);
+// }
+// }
+// var toggleButton = L.DomUtil.create('button', 'toggle-button'); 
+// toggleButton.innerHTML = 'Compare';
+// toggleButton.addEventListener('click',() =>  toggleSidebyside());
+
+// var resetControl = L.control({ position: 'topright' }); 
+
+// resetControl.onAdd = function (map) {
+//    return toggleButton;
+// };
+
+// resetControl.addTo(map);
+
+// Assuming your layers are defined as variables like osm, google, rain, clouds, etc.
+
+// Create a control with two dropdowns for selecting layers
+const LayerControl = L.Control.extend({
+  options: {
+      position: 'topright',
+      layers:{}
+  },
+
+  onAdd: function (map) {
+      const container = L.DomUtil.create('div', 'layer-control');
+      L.DomUtil.addClass(container, 'leaflet-bar');
+
+      const selectLeft = L.DomUtil.create('select', 'layer-select', container);
+      const selectRight = L.DomUtil.create('select', 'layer-select', container);
+
+      // Helper function to populate select elements
+      const addOption = (select, layer, name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          select.appendChild(option);
+          this.options.layers[name] = layer; // Store layer reference in control options
+      };
+
+      // Add options to both selects
+      addOption(selectLeft, osm, 'OSM');
+      addOption(selectLeft, google, 'Google');
+      addOption(selectLeft, rain, 'Rain');
+      addOption(selectLeft, clouds, 'Clouds');
+
+      addOption(selectRight, osm, 'OSM');
+      addOption(selectRight, google, 'Google');
+      addOption(selectRight, rain, 'Rain');
+      addOption(selectRight, clouds, 'Clouds');
+
+      var sideBySideControl;
+      // Listen for changes and update the Side By Side control
+      const updateSideBySide = () => {
+          if (sideBySideControl) {
+              map.removeControl(sideBySideControl);
+          }
+          const leftLayer = this.options.layers[selectLeft.value];
+          const rightLayer = this.options.layers[selectRight.value];
+          console.log(leftLayer);
+          console.log(rightLayer);
+          sideBySideControl = L.control.sideBySide(leftLayer, rightLayer).addTo(map);
+      };
+
+      selectLeft.onchange = updateSideBySide;
+      selectRight.onchange = updateSideBySide;
+
+      return container;
+  },
+
+  onRemove: function (map) {
+      // Clean up when the control is removed
+      if (sideBySideControl) {
+          map.removeControl(sideBySideControl);
+      }
+  }
+});
+
+// Add this new control to the map
+map.addControl(new LayerControl());

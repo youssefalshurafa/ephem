@@ -211,7 +211,7 @@ body {
    z-index: 1000; /* Stay on top */
    top: 0; /* Stay at the top */
    left: 0; /* Stay on the left */
-   background-color: #343a40; /* Dark background for sidebar */
+   background: #A22020; /* Dark background for sidebar */
    overflow-x: hidden; /* Disable horizontal scroll */
    padding-top: 20px;
         }
