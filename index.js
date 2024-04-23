@@ -247,6 +247,8 @@ const LayerControl = L.Control.extend({
       };
 
       // Add options to both selects
+     
+      addOption(selectLeft, null, 'Left Layer');
       // addOption(selectLeft, osm, 'OSM');
       // addOption(selectLeft, google, 'Google');
       addOption(selectLeft, rain, 'Rain');
@@ -255,6 +257,8 @@ const LayerControl = L.Control.extend({
       addOption(selectLeft, temperature, 'Temperature');
       addOption(selectLeft, precipitationcls, 'Precipitation');
 
+
+      addOption(selectRight, null, 'Right Layer');
       // addOption(selectRight, osm, 'OSM');
       // addOption(selectRight, google, 'Google');
       addOption(selectRight, rain, 'Rain');
@@ -276,6 +280,17 @@ const LayerControl = L.Control.extend({
 
       selectLeft.onchange = updateSideBySide;
       selectRight.onchange = updateSideBySide;
+
+          // Create a clear button
+          const clearButton = L.DomUtil.create('button', 'clear-button', container);
+          clearButton.innerHTML = 'Clear';
+          clearButton.onclick = () => {
+              if (sideBySideControl) {
+                  map.removeControl(sideBySideControl);
+                  selectLeft.selectedIndex = 0; // Reset dropdowns
+                  selectRight.selectedIndex = 0;
+              }
+          };
 
       return container;
   },
