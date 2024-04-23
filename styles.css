@@ -197,8 +197,7 @@ body {
    }
    .main{
      background-color: #f5f3ff;
-     margin-left: 200px; /* Push main content to the right */
-     width: calc(100% - 200px); /* Reduce the width of the main content */
+     width: 100%; /* Reduce the width of the main content */
      min-height: 100vh;  
   
    }
